@@ -1,0 +1,11 @@
+[package]
+authors = ["rise0chen <rise0chen@163.com>"]
+categories = ["rust-patterns"]
+description = "on drop"
+edition = "2018"
+keywords = ["drop"]
+license-file = "LICENSE"
+name = "on_drop"
+readme = "./README.md"
+repository = "https://github.com/rise0chen/on_drop.git"
+version = "0.1.0"
