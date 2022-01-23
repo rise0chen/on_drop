@@ -1,7 +1,16 @@
 use core::mem::MaybeUninit;
 use core::ops::Deref;
+use core::sync::atomic::{AtomicBool, Ordering::Relaxed};
+use std::sync::Arc;
 
 const INIT_CODE: u32 = 0xF47E8A5B;
+
+pub struct OnDropToken(Arc<AtomicBool>);
+impl OnDropToken {
+    pub fn is_droped(&self) -> bool {
+        self.0.load(Relaxed)
+    }
+}
 
 pub struct OnDrop<T> {
     data: T,
@@ -17,6 +26,19 @@ impl<T> OnDrop<T> {
             drop_time: 0,
             on_drop: MaybeUninit::new(Box::new(on_drop)),
         }
+    }
+    pub fn token(data: T) -> (Self, OnDropToken) {
+        let droped = Arc::new(AtomicBool::new(false));
+        let token = OnDropToken(droped.clone());
+        (
+            Self {
+                data,
+                is_init: INIT_CODE,
+                drop_time: 0,
+                on_drop: MaybeUninit::new(Box::new(move || droped.store(true, Relaxed))),
+            },
+            token,
+        )
     }
 }
 impl<T> Drop for OnDrop<T> {
