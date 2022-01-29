@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 const INIT_CODE: u32 = 0xF47E8A5B;
 
+#[derive(Clone)]
 pub struct OnDropToken(Arc<AtomicBool>);
 impl OnDropToken {
     pub fn is_droped(&self) -> bool {
